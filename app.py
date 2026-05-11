@@ -71,211 +71,340 @@ if ('serviceWorker' in navigator) {
 # ── CSS personnalisé — MAIN CONTENT ONLY (Sidebar styling removed to prevent conflicts) ──
 st.markdown("""
 <style>
-/* ════════════════════════════════════════════════════════════════
-   PALETTE & ROOT VARIABLES
-   ════════════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* ══════════════════════════════════════════════
+   ROOT — Palette industrielle froide
+   ══════════════════════════════════════════════ */
 :root {
-    --blue-dark : #0d2b45;
-    --blue-mid  : #1a5276;
-    --blue-light: #2e86c1;
-    --ice       : #d6eaf8;
-    --grey-bg   : #f4f6f9;
-    --accent    : #1abc9c;
+    --bg         : #f0f2f5;
+    --surface    : #ffffff;
+    --surface-2  : #f7f8fa;
+    --navy       : #0b1e2d;
+    --navy-mid   : #122840;
+    --cyan       : #00b4d8;
+    --cyan-dim   : #0096b4;
+    --green      : #00c48c;
+    --amber      : #f59e0b;
+    --red        : #ef4444;
+    --border     : #e0e4eb;
+    --border-dark: #c8cfd9;
+    --text       : #1a2535;
+    --text-mid   : #4a5568;
+    --text-muted : #8494a7;
+    --mono       : 'DM Mono', 'Courier New', monospace;
+    --sans       : 'DM Sans', system-ui, sans-serif;
+    --display    : 'Syne', sans-serif;
 }
 
-/* ════════════════════════════════════════════════════════════════
-   MAIN CONTENT STYLING (Sidebar excluded to preserve interactivity)
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   GLOBAL
+   ══════════════════════════════════════════════ */
+html, body, [class*="css"] {
+    font-family: var(--sans);
+    background-color: var(--bg);
+    color: var(--text);
+}
 
-/* Main header — improved contrast */
+/* Streamlit main block padding reduction */
+.block-container {
+    padding-top: 1.5rem !important;
+    padding-bottom: 2rem !important;
+}
+
+/* ══════════════════════════════════════════════
+   HEADER — dark plate, cyan rule, Syne display
+   ══════════════════════════════════════════════ */
 .main-header {
-    background: linear-gradient(135deg, #0d2b45 0%, #1a5276 60%, #2e86c1 100%);
-    padding: 2rem 2.5rem;
-    border-radius: 12px;
-    margin-bottom: 1.5rem;
-    color: white !important; /* Ensure text is white */
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3); /* Add text shadow for better readability */
+    background: var(--navy);
+    padding: 1.8rem 2.2rem 1.6rem;
+    border-radius: 2px;
+    margin-bottom: 1.6rem;
+    position: relative;
+    overflow: hidden;
+}
+.main-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--cyan) 0%, var(--green) 100%);
+}
+.main-header::after {
+    content: 'THERMO IAA';
+    position: absolute;
+    right: 2.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--display);
+    font-size: 5rem;
+    font-weight: 800;
+    color: rgba(255,255,255,0.04);
+    letter-spacing: -0.02em;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
 }
 .main-header h1 {
-    font-size: 2.1rem;
-    margin-bottom: .2rem;
-    font-weight: 700;
-    color: white !important; /* Explicit white color */
+    font-family: var(--display);
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 .45rem 0;
+    letter-spacing: -0.01em;
+    line-height: 1;
 }
 .main-header p {
-    font-size: 1rem;
-    opacity: .95; /* Slightly higher opacity for better readability */
+    font-family: var(--mono);
+    font-size: .78rem;
     margin: 0;
-    color: white !important; /* Explicit white color */
+    color: #5d8aaa;
+    line-height: 1.7;
+    letter-spacing: 0.03em;
 }
 
-/* KPI cards — main content only */
+/* ══════════════════════════════════════════════
+   KPI CARDS — monospace values, sharp geometry
+   ══════════════════════════════════════════════ */
 .kpi-card {
-    background: white;
-    border-left: 5px solid #2e86c1;
-    border-radius: 8px;
-    padding: 1rem 1.2rem;
-    margin-bottom: .8rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1rem 1.15rem .9rem;
+    margin-bottom: .7rem;
+    position: relative;
+    transition: box-shadow .15s ease;
 }
-.kpi-label { 
-    font-size: .78rem; 
-    color: #555; 
-    font-weight: 600;
-    text-transform: uppercase; 
-    letter-spacing: .05em; 
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--cyan);
+    border-radius: 2px 0 0 2px;
 }
-.kpi-value { 
-    font-size: 1.6rem; 
-    font-weight: 700; 
-    color: #0d2b45; 
-    line-height: 1.2; 
+.kpi-card:hover {
+    box-shadow: 0 4px 18px rgba(0,0,0,.07);
 }
-.kpi-unit  { 
-    font-size: .8rem; 
-    color: #888; 
+.kpi-label {
+    font-family: var(--mono);
+    font-size: .68rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    margin-bottom: .3rem;
+}
+.kpi-value {
+    font-family: var(--mono);
+    font-size: 1.7rem;
+    font-weight: 500;
+    color: var(--navy);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+.kpi-unit {
+    font-family: var(--mono);
+    font-size: .72rem;
+    color: var(--text-muted);
+    margin-top: .15rem;
+    letter-spacing: .04em;
 }
 
-/* KPI card variants */
-.kpi-card-accent { 
-    border-left-color: #1abc9c; 
-}
-.kpi-card-accent .kpi-value { 
-    color: #0e6655; 
-}
+/* Variants */
+.kpi-card-accent::before { background: var(--green); }
+.kpi-card-accent .kpi-value { color: #027a5c; }
+.kpi-card-warn::before   { background: var(--amber); }
+.kpi-card-warn .kpi-value   { color: #92580a; }
 
-.kpi-card-warn { 
-    border-left-color: #e67e22; 
-}
-.kpi-card-warn .kpi-value { 
-    color: #a04000; 
-}
-
-/* Section badge */
+/* ══════════════════════════════════════════════
+   SECTION BADGE
+   ══════════════════════════════════════════════ */
 .section-badge {
-    display: inline-block;
-    background: #eaf4fb;
-    color: #1a5276;
-    border-radius: 20px;
-    padding: .2rem .9rem;
-    font-size: .82rem;
-    font-weight: 600;
-    margin-bottom: .6rem;
-    border: 1px solid #aed6f1;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--navy);
+    color: var(--cyan);
+    border-radius: 2px;
+    padding: .18rem .75rem;
+    font-family: var(--mono);
+    font-size: .72rem;
+    font-weight: 500;
+    margin-bottom: .7rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+.section-badge::before {
+    content: '//';
+    opacity: .5;
 }
 
-/* Equation box */
+/* ══════════════════════════════════════════════
+   EQUATION BOX
+   ══════════════════════════════════════════════ */
 .eq-box {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
+    background: var(--navy);
+    border-radius: 2px;
     padding: .8rem 1.2rem;
-    font-family: 'Courier New', monospace;
-    font-size: .9rem;
-    color: #333;
-    margin: .5rem 0;
+    font-family: var(--mono);
+    font-size: .87rem;
+    color: #7ec8e3;
+    margin: .45rem 0;
+    border-left: 3px solid var(--cyan);
 }
 
-/* Interpretation box */
+/* ══════════════════════════════════════════════
+   INTERPRETATION BOX
+   ══════════════════════════════════════════════ */
 .interp-box {
-    background: #eafaf1;
-    border-left: 4px solid #1abc9c;
-    border-radius: 6px;
-    padding: .8rem 1rem;
+    background: #f2fbf8;
+    border-left: 3px solid var(--green);
+    border-radius: 0 2px 2px 0;
+    padding: .75rem 1.1rem;
     margin: .4rem 0;
+    font-size: .91rem;
+    color: var(--text);
+    line-height: 1.6;
 }
 
-/* ════════════════════════════════════════════════════════════════
-   SIDEBAR STYLING — Minimal & Non-Intrusive
-   ════════════════════════════════════════════════════════════════
-   
-   IMPORTANT: Only styling that does NOT interfere with Streamlit
-   widget interactivity. NO aggressive !important overrides.
-*/
-
-/* Sidebar container — light background */
+/* ══════════════════════════════════════════════
+   SIDEBAR — structured, dark-navy header strip
+   ══════════════════════════════════════════════ */
 .stSidebar {
-    background-color: #f8f9fa;
+    background-color: var(--surface-2) !important;
+    border-right: 1px solid var(--border) !important;
 }
 
-.streamlit-dark-mode .stSidebar,
-.streamlit-dark-mode section[data-testid="stSidebar"],
-.streamlit-dark-mode .stSidebar [data-testid="stMarkdownContainer"],
-.streamlit-dark-mode section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] {
-    background-color: #0e1720 !important;
-    color: #f2f5f9 !important;
-}
-
-.streamlit-dark-mode .stSidebar,
-.streamlit-dark-mode .stSidebar [data-testid="stMarkdownContainer"] h2,
-.streamlit-dark-mode .stSidebar [data-testid="stMarkdownContainer"] h3 {
-    color: #d6eaf8 !important;
-}
-
-.streamlit-dark-mode .stSidebar button,
-.streamlit-dark-mode .stSidebar .stButton > button,
-.streamlit-dark-mode .stSidebar [data-testid="stBaseButton-primary"] {
-    background-color: #ff4b4b !important;
-    color: #f2f5f9 !important;
-    border-color: transparent !important;
-}
-
-/* Sidebar sections — subtle spacing */
 .stSidebar [data-testid="stMarkdownContainer"] h2 {
-    color: #0d2b45;
-    font-weight: 700;
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
-    border-bottom: 2px solid #2e86c1;
-    padding-bottom: 0.4rem;
+    font-family: var(--display);
+    color: var(--navy);
+    font-size: .9rem;
+    font-weight: 800;
+    margin-top: 1.2rem;
+    margin-bottom: .55rem;
+    padding-bottom: .35rem;
+    border-bottom: 2px solid var(--cyan);
+    letter-spacing: .01em;
+    text-transform: uppercase;
 }
 
 .stSidebar [data-testid="stMarkdownContainer"] h3 {
-    color: #1a5276;
-    font-weight: 600;
-    margin-top: 0.8rem;
-    margin-bottom: 0.4rem;
+    font-family: var(--mono);
+    color: var(--text-muted);
+    font-size: .72rem;
+    font-weight: 500;
+    margin-top: 1rem;
+    margin-bottom: .3rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
 }
 
-.streamlit-dark-mode .kpi-card,
-.streamlit-dark-mode .eq-box,
-.streamlit-dark-mode .interp-box,
-.streamlit-dark-mode .section-badge,
-.streamlit-dark-mode .stSidebar {
-    color: #f2f5f9;
+/* ══════════════════════════════════════════════
+   STREAMLIT TAB STRIP — sharpen the tab look
+   ══════════════════════════════════════════════ */
+div[data-testid="stTabs"] > div:first-child {
+    border-bottom: 2px solid var(--border-dark) !important;
+    gap: 0 !important;
+}
+button[data-baseweb="tab"] {
+    font-family: var(--mono) !important;
+    font-size: .75rem !important;
+    letter-spacing: .06em !important;
+    text-transform: uppercase !important;
+    padding: .5rem 1.1rem !important;
+    border-radius: 0 !important;
+    color: var(--text-muted) !important;
+}
+button[data-baseweb="tab"][aria-selected="true"] {
+    color: var(--navy) !important;
+    font-weight: 600 !important;
+    border-bottom: 2px solid var(--cyan) !important;
 }
 
+/* ══════════════════════════════════════════════
+   STREAMLIT METRICS (fallback if used)
+   ══════════════════════════════════════════════ */
+[data-testid="metric-container"] {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: .8rem 1rem;
+}
+
+/* ══════════════════════════════════════════════
+   BUTTONS
+   ══════════════════════════════════════════════ */
+.stButton > button[kind="primary"],
+button[data-testid="stBaseButton-primary"] {
+    background: var(--navy) !important;
+    color: var(--cyan) !important;
+    border: 1px solid var(--cyan) !important;
+    border-radius: 2px !important;
+    font-family: var(--mono) !important;
+    font-size: .78rem !important;
+    letter-spacing: .07em !important;
+    text-transform: uppercase !important;
+    transition: background .15s, color .15s !important;
+}
+.stButton > button[kind="primary"]:hover,
+button[data-testid="stBaseButton-primary"]:hover {
+    background: var(--cyan) !important;
+    color: var(--navy) !important;
+}
+
+/* ══════════════════════════════════════════════
+   DATAFRAMES
+   ══════════════════════════════════════════════ */
+[data-testid="stDataFrame"] {
+    border: 1px solid var(--border);
+    border-radius: 2px;
+}
+
+/* ══════════════════════════════════════════════
+   DIVIDER
+   ══════════════════════════════════════════════ */
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.2rem 0;
+}
+
+/* ══════════════════════════════════════════════
+   DARK MODE OVERRIDES
+   ══════════════════════════════════════════════ */
+.streamlit-dark-mode .stSidebar,
+.streamlit-dark-mode section[data-testid="stSidebar"] {
+    background-color: #0a1520 !important;
+    border-right-color: #1d2f40 !important;
+}
+.streamlit-dark-mode .stSidebar [data-testid="stMarkdownContainer"] h2 {
+    color: #e2edf5 !important;
+}
+.streamlit-dark-mode .stSidebar [data-testid="stMarkdownContainer"] h3 {
+    color: #4a7a9b !important;
+}
 .streamlit-dark-mode .kpi-card {
-    background: #17202a;
-    border-color: #2e86c1;
-    box-shadow: 0 2px 8px rgba(0,0,0,.45);
+    background: #0f1e2e;
+    border-color: #1d2f40;
 }
+.streamlit-dark-mode .kpi-value { color: #d6eaf8; }
+.streamlit-dark-mode .kpi-label { color: #4a6a82; }
+.streamlit-dark-mode .kpi-unit  { color: #4a6a82; }
+.streamlit-dark-mode .interp-box { background: #0d2218; border-left-color: var(--green); color: #c5e8d8; }
+.streamlit-dark-mode .section-badge { background: #0d1e2d; color: var(--cyan); }
+.streamlit-dark-mode .eq-box { background: #060f18; color: #5cbddb; border-left-color: var(--cyan); }
 
-.streamlit-dark-mode .eq-box {
-    background: #1f2a36;
-    border-color: #3f5a78;
-    color: #e5eef8;
-}
-
-.streamlit-dark-mode .interp-box {
-    background: #1b2830;
-    border-left-color: #1abc9c;
-    color: #d6eaf8;
-}
-
-.streamlit-dark-mode .section-badge {
-    background: #1a2f44;
-    border-color: #2e86c1;
-    color: #d6eaf8;
-}
-
-html[data-theme="dark"] .stSidebar {
-    background-color: #0e1720;
-}
-
+html[data-theme="dark"] .stSidebar { background-color: #0a1520; }
 html[data-theme="dark"] .stSidebar [data-testid="stMarkdownContainer"] h2,
 html[data-theme="dark"] .stSidebar [data-testid="stMarkdownContainer"] h3 {
     color: #d6eaf8;
+}
+.streamlit-dark-mode .stSidebar button,
+.streamlit-dark-mode .stSidebar .stButton > button {
+    background-color: #0f1e2e !important;
+    color: var(--cyan) !important;
+    border-color: var(--cyan) !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -316,12 +445,9 @@ components.html("""
 
 st.markdown("""
 <div class="main-header">
-  <h1>🧊 ThermoIAA — Refroidissement & Congélation</h1>
-  <p>Outil de dimensionnement thermodynamique pour l'industrie agroalimentaire &nbsp;·&nbsp;
-     Version 1.0 &nbsp;·&nbsp; Projet Thermodynamique Appliquée</p>
-  <p style="opacity:.85; margin-top:.6rem; font-size:0.95rem;">
-     Rayane Berch — 1CI IAA &nbsp;·&nbsp; Professeure Amal Ibijbijen
-  </p>
+  <h1>ThermoIAA — Refroidissement &amp; Congélation</h1>
+  <p>Dimensionnement thermodynamique &nbsp;·&nbsp; Industrie Agroalimentaire &nbsp;·&nbsp; v1.0<br>
+  Rayane Berch — 1CI IAA &nbsp;·&nbsp; Professeure Amal Ibijbijen</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -346,14 +472,14 @@ def collect_sidebar_inputs():
     
     with st.sidebar:
         # ── HEADER ────────────────────────────────────────────────────────────
-        st.markdown("## ⚙️ Données d'entrée")
+        st.markdown("## Données d'entrée")
         st.write("Définir tous les paramètres du procédé de refroidissement ou congélation.")
         
         # ── MODE DE TRAITEMENT ────────────────────────────────────────────────
         st.markdown("### Mode de traitement")
         mode = st.radio(
             "Sélectionner le procédé :",
-            ["🌡️ Refroidissement simple", "🧊 Congélation complète"],
+            ["Refroidissement simple", "Congélation complète"],
             help="Refroidissement : sans changement d'état. Congélation : passage à T négative.",
             key="mode_select"
         )
@@ -363,7 +489,7 @@ def collect_sidebar_inputs():
         st.divider()
         
         # ── PRODUIT ALIMENTAIRE ───────────────────────────────────────────────
-        st.markdown("### 🥩 Produit alimentaire")
+        st.markdown("### Produit alimentaire")
         
         produits_predefinis = {
             "Poulet (volaille)"    : {"cp": 3.31, "cp_c": 1.68, "L": 246, "T_cong": -1.5, "w": 0.74},
@@ -388,7 +514,7 @@ def collect_sidebar_inputs():
         st.divider()
         
         # ── PARAMÈTRES DU LOT ─────────────────────────────────────────────────
-        st.markdown("### 📦 Paramètres du lot")
+        st.markdown("### Paramètres du lot")
         
         masse = st.number_input(
             "Masse du produit (kg)",
@@ -401,7 +527,7 @@ def collect_sidebar_inputs():
         st.divider()
         
         # ── TEMPÉRATURES ─────────────────────────────────────────────────────
-        st.markdown("### 🌡️ Températures")
+        st.markdown("### Températures")
         
         T_ini = st.number_input(
             "Température initiale (°C)",
@@ -441,7 +567,7 @@ def collect_sidebar_inputs():
         st.divider()
         
         # ── PROPRIÉTÉS THERMIQUES ────────────────────────────────────────────
-        st.markdown("### 🔬 Propriétés thermiques")
+        st.markdown("### Propriétés thermiques")
         
         cp_default = preset["cp"] if preset else 3.50
         cp = st.number_input(
@@ -487,7 +613,7 @@ def collect_sidebar_inputs():
         st.divider()
         
         # ── DURÉE & MACHINE FRIGORIFIQUE ──────────────────────────────────────
-        st.markdown("### ⏱️ Durée & Machine")
+        st.markdown("### Durée & Machine")
         
         duree = st.number_input(
             "Durée de traitement (h)",
@@ -519,7 +645,7 @@ def collect_sidebar_inputs():
         st.divider()
         
         # ── DONNÉES ÉCONOMIQUES ──────────────────────────────────────────────
-        st.markdown("### 💶 Données économiques")
+        st.markdown("### Données économiques")
         
         prix_elec = st.number_input(
             "Prix de l'électricité (MAD/kWh)",
@@ -554,7 +680,7 @@ def collect_sidebar_inputs():
         
         # ── BUTTON: LANCER LES CALCULS ───────────────────────────────────────
         calc_btn = st.button(
-            "🚀 Lancer les calculs",
+            "Lancer les calculs",
             type="primary",
             use_container_width=True,
             help="Cliquer pour exécuter les calculs avec les paramètres saisis.",
@@ -640,14 +766,14 @@ r = st.session_state.get("resultats")
 # ─────────────────────────────────────────────────────────────────────────────
 
 tabs = st.tabs([
-    "📊 Résultats",
-    "📈 Analyse de sensibilité",
-    "⚖️ Comparaison scénarios",
-    "🔭 Profil thermique",
-    "📐 Équations",
-    "💬 Interprétation",
-    "📄 Rapport & Export",
-    "📋 Historique",
+    "Résultats",
+    "Analyse de sensibilité",
+    "Comparaison scénarios",
+    "Profil thermique",
+    "Équations",
+    "Interprétation",
+    "Rapport & Export",
+    "Historique",
 ])
 
 
@@ -656,10 +782,10 @@ tabs = st.tabs([
 # ══════════════════════════════════════════════════════════════════════════════
 with tabs[0]:
     if r is None:
-        st.info("👈 Saisir les paramètres dans la barre latérale, puis cliquer sur **Lancer les calculs**.")
+        st.info("Saisir les paramètres dans la barre latérale, puis cliquer sur **Lancer les calculs**.")
     else:
         st.markdown(f'<div class="section-badge">Mode : {r["mode"]}</div>', unsafe_allow_html=True)
-        st.markdown("### 🔑 Indicateurs clés de performance (KPI)")
+        st.markdown("### Indicateurs clés de performance")
 
         # ── Ligne 1 : Énergie ─────────────────────────────────────────────────
         c1, c2, c3, c4 = st.columns(4)
@@ -726,21 +852,21 @@ with tabs[0]:
         # ── Temps minimal ─────────────────────────────────────────────────────
         if r.get("t_min_h"):
             st.info(
-                f"⏱️ **Temps minimal de traitement** avec la puissance disponible : "
+                f"**Temps minimal de traitement** avec la puissance disponible : "
                 f"**{r['t_min_h']:.2f} h** ({r['t_min_h']*60:.0f} min)"
             )
 
         # ── Bilan énergétique détaillé ─────────────────────────────────────────
         st.markdown("---")
-        st.markdown("### 📋 Bilan énergétique détaillé")
+        st.markdown("### Bilan énergétique détaillé")
         col_a, col_b = st.columns([1, 1])
 
         with col_a:
             df_bilan = pd.DataFrame({
                 "Phase": [
-                    "① Chaleur sensible (avant congélation)",
-                    "② Chaleur latente (changement d'état)",
-                    "③ Chaleur sensible (après congélation)",
+                    "Chaleur sensible (avant congélation)",
+                    "Chaleur latente (changement d'état)",
+                    "Chaleur sensible (après congélation)",
                     "TOTAL",
                 ],
                 "Énergie (kJ)": [
@@ -756,8 +882,7 @@ with tabs[0]:
                     round(r["Q_totale_kWh"], 4),
                 ],
             })
-            st.dataframe(df_bilan, use_container_width=True, hide_index=True)
-
+            st.table(df_bilan)
         with col_b:
             # Graphique camembert si congélation
             if r["Q_latente_kJ"] > 0:
@@ -774,12 +899,13 @@ with tabs[0]:
                     paper_bgcolor="rgba(0,0,0,0)",
                 )
                 st.plotly_chart(fig_pie, use_container_width=True)
-            else:
-                st.markdown("*Mode refroidissement simple — pas de changement d'état.*")
+
+        if r["Q_latente_kJ"] == 0:
+            st.caption("Mode refroidissement simple — pas de changement d'état.")
 
         # ── Tableau synthèse coûts ─────────────────────────────────────────────
         st.markdown("---")
-        st.markdown("### 💰 Synthèse économique")
+        st.markdown("### Synthèse économique")
         df_couts = pd.DataFrame({
             "Horizon": ["Par opération", "Par kg", "Journalier", "Mensuel", "Annuel"],
             "Coût (MAD)": [
@@ -802,11 +928,11 @@ with tabs[1]:
     else:
         params = st.session_state["params"]
         mode_calc = st.session_state["mode_calc"]
-        st.markdown("### 📈 Analyse de sensibilité — Variation des paramètres clés")
+        st.markdown("### Analyse de sensibilité — Variation des paramètres clés")
         st.caption("Chaque graphique montre l'effet d'un paramètre sur les indicateurs énergétiques et économiques.")
 
         # ── COP ──────────────────────────────────────────────────────────────
-        with st.expander("📉 Effet du COP sur la consommation et le coût", expanded=True):
+        with st.expander("Effet du COP sur la consommation et le coût", expanded=True):
             cops = np.linspace(1.0, 7.0, 40)
             if mode_calc == "congelation":
                 df_cop = sensibilite_COP(params, cops)
@@ -838,7 +964,7 @@ with tabs[1]:
             st.dataframe(df_cop.round(3), use_container_width=True, hide_index=True)
 
         # ── Température finale ────────────────────────────────────────────────
-        with st.expander("🌡️ Effet de la température finale", expanded=False):
+        with st.expander("Effet de la température finale", expanded=False):
             T_range = np.linspace(-35.0, T_ini - 1, 40)
             if mode_calc == "congelation":
                 df_T = sensibilite_T_finale(params, T_range)
@@ -868,7 +994,7 @@ with tabs[1]:
             st.plotly_chart(fig_T2, use_container_width=True)
 
         # ── Masse ─────────────────────────────────────────────────────────────
-        with st.expander("⚖️ Effet de la masse du produit", expanded=False):
+        with st.expander("Effet de la masse du produit", expanded=False):
             masses = np.linspace(50, masse * 3, 40)
             if mode_calc == "congelation":
                 df_m = sensibilite_masse(params, masses)
@@ -890,7 +1016,7 @@ with tabs[1]:
             st.plotly_chart(fig_m, use_container_width=True)
 
         # ── Prix électricité ──────────────────────────────────────────────────
-        with st.expander("💶 Effet du prix de l'électricité", expanded=False):
+        with st.expander("Effet du prix de l'électricité", expanded=False):
             prix_range = np.linspace(0.05, 0.40, 40)
             if mode_calc == "congelation":
                 df_px = sensibilite_prix_elec(params, prix_range)
@@ -913,7 +1039,7 @@ with tabs[1]:
             st.plotly_chart(fig_px, use_container_width=True)
 
         # ── Durée ─────────────────────────────────────────────────────────────
-        with st.expander("⏱️ Effet de la durée de traitement sur la puissance", expanded=False):
+        with st.expander("Effet de la durée de traitement sur la puissance", expanded=False):
             durees = np.linspace(0.5, 24.0, 40)
             if mode_calc == "congelation":
                 df_d = sensibilite_duree(params, durees)
@@ -945,7 +1071,7 @@ with tabs[1]:
 # TAB 3 — COMPARAISON DE SCÉNARIOS
 # ══════════════════════════════════════════════════════════════════════════════
 with tabs[2]:
-    st.markdown("### ⚖️ Comparaison de scénarios prédéfinis")
+    st.markdown("### Comparaison de scénarios prédéfinis")
     st.caption("Comparez plusieurs configurations : COP, températures finales, masses, durées.")
 
     if r is None:
@@ -958,21 +1084,21 @@ with tabs[2]:
         # Construction des scénarios comparatifs
         if mode_calc == "congelation":
             scenarios_def = [
-                {**base, "nom": "① Référence (COP 3.0)", "mode": "congelation"},
-                {**base, "nom": "② COP élevé (4.5)", "mode": "congelation", "COP": 4.5},
-                {**base, "nom": "③ COP faible (1.8)", "mode": "congelation", "COP": 1.8},
-                {**base, "nom": "④ T finale -25°C", "mode": "congelation", "T_finale": -25.0},
-                {**base, "nom": "⑤ Double masse (x2)", "mode": "congelation", "masse": base["masse"] * 2},
-                {**base, "nom": "⑥ Durée courte (4h)", "mode": "congelation", "duree": 4.0},
+                {**base, "nom": "Référence (COP 3.0)", "mode": "congelation"},
+                {**base, "nom": "COP élevé (4.5)", "mode": "congelation", "COP": 4.5},
+                {**base, "nom": "COP faible (1.8)", "mode": "congelation", "COP": 1.8},
+                {**base, "nom": "T finale -25°C", "mode": "congelation", "T_finale": -25.0},
+                {**base, "nom": "Double masse (x2)", "mode": "congelation", "masse": base["masse"] * 2},
+                {**base, "nom": "Durée courte (4h)", "mode": "congelation", "duree": 4.0},
             ]
         else:
             scenarios_def = [
-                {**base, "nom": "① Référence", "mode": "refroid"},
-                {**base, "nom": "② COP élevé (4.5)", "mode": "refroid", "COP": 4.5},
-                {**base, "nom": "③ COP faible (1.8)", "mode": "refroid", "COP": 1.8},
-                {**base, "nom": "④ T finale 2°C", "mode": "refroid", "T_finale": 2.0},
-                {**base, "nom": "⑤ Double masse (x2)", "mode": "refroid", "masse": base["masse"] * 2},
-                {**base, "nom": "⑥ Durée courte (2h)", "mode": "refroid", "duree": 2.0},
+                {**base, "nom": "Référence", "mode": "refroid"},
+                {**base, "nom": "COP élevé (4.5)", "mode": "refroid", "COP": 4.5},
+                {**base, "nom": "COP faible (1.8)", "mode": "refroid", "COP": 1.8},
+                {**base, "nom": "T finale 2°C", "mode": "refroid", "T_finale": 2.0},
+                {**base, "nom": "Double masse (x2)", "mode": "refroid", "masse": base["masse"] * 2},
+                {**base, "nom": "Durée courte (2h)", "mode": "refroid", "duree": 2.0},
             ]
 
         # Nettoyage des clés inutiles pour chaque scénario
@@ -1028,7 +1154,7 @@ with tabs[2]:
 # TAB 4 — PROFIL THERMIQUE
 # ══════════════════════════════════════════════════════════════════════════════
 with tabs[3]:
-    st.markdown("### 🔭 Profil de température dans le temps")
+    st.markdown("### Profil de température dans le temps")
     if r is None:
         st.info("Veuillez d'abord lancer les calculs.")
     else:
@@ -1076,14 +1202,14 @@ with tabs[3]:
             yaxis=dict(showgrid=True, gridcolor="#dee2e6"),
         )
         st.plotly_chart(fig_prof, use_container_width=True)
-        st.caption("⚠️ Le profil est une modélisation simplifiée (décroissance exponentielle + palier). Un modèle de diffusion thermique complet nécessiterait la géométrie exacte du produit.")
+        st.caption("Note : Le profil est une modélisation simplifiée (décroissance exponentielle + palier). Un modèle de diffusion thermique complet nécessiterait la géométrie exacte du produit.")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 5 — ÉQUATIONS
 # ══════════════════════════════════════════════════════════════════════════════
 with tabs[4]:
-    st.markdown("### 📐 Modèle mathématique — Équations utilisées")
+    st.markdown("### Modèle mathématique — Équations utilisées")
     st.markdown("""
 <div class="section-badge">Thermodynamique appliquée — IAA</div>
 
@@ -1094,39 +1220,42 @@ des bilans thermodynamiques classiques appliqués aux procédés agroalimentaire
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown("#### 🔷 Bilan matière")
-        st.markdown('<div class="eq-box">m_produit = m_entrée (système fermé par lot)</div>', unsafe_allow_html=True)
+        st.markdown("#### Bilan matière")
+        st.latex(r'm_{\text{produit}} = m_{\text{entrée}} \quad (\text{système fermé par lot})')
 
-        st.markdown("#### 🔷 Phase 1 — Chaleur sensible (avant congélation)")
-        st.markdown('<div class="eq-box">Q₁ = m · cp_frais · (T_ini − T_cong)  &nbsp;&nbsp;[kJ]</div>', unsafe_allow_html=True)
+        st.markdown("#### Phase 1 — Chaleur sensible (avant congélation)")
+        st.latex(r'Q_1 = m \cdot c_{p,\text{frais}} \cdot (T_{\text{ini}} - T_{\text{cong}}) \quad [\text{kJ}]')
 
-        st.markdown("#### 🔷 Phase 2 — Chaleur latente de congélation")
-        st.markdown('<div class="eq-box">Q₂ = m · w_eau · L_cong  &nbsp;&nbsp;[kJ]<br>où w_eau = fraction d\'eau congelable</div>', unsafe_allow_html=True)
+        st.markdown("#### Phase 2 — Chaleur latente de congélation")
+        st.latex(r'Q_2 = m \cdot w_{\text{eau}} \cdot L_{\text{cong}} \quad [\text{kJ}]')
+        st.markdown("où $w_{\\text{eau}}$ = fraction d'eau congelable")
 
-        st.markdown("#### 🔷 Phase 3 — Chaleur sensible (après congélation)")
-        st.markdown('<div class="eq-box">Q₃ = m · cp_congelé · (T_cong − T_finale)  &nbsp;&nbsp;[kJ]</div>', unsafe_allow_html=True)
+        st.markdown("#### Phase 3 — Chaleur sensible (après congélation)")
+        st.latex(r'Q_3 = m \cdot c_{p,\text{congelé}} \cdot (T_{\text{cong}} - T_{\text{finale}}) \quad [\text{kJ}]')
 
-        st.markdown("#### 🔷 Énergie totale à extraire")
-        st.markdown('<div class="eq-box">Q_totale = Q₁ + Q₂ + Q₃  &nbsp;&nbsp;[kJ]</div>', unsafe_allow_html=True)
+        st.markdown("#### Énergie totale à extraire")
+        st.latex(r'Q_{\text{totale}} = Q_1 + Q_2 + Q_3 \quad [\text{kJ}]')
 
     with col2:
-        st.markdown("#### 🔶 Puissance frigorifique utile")
-        st.markdown('<div class="eq-box">P_utile = Q_totale / (Δt × 3 600)  &nbsp;&nbsp;[kW]<br>Δt en heures</div>', unsafe_allow_html=True)
+        st.markdown("#### Puissance frigorifique utile")
+        st.latex(r'P_{\text{utile}} = \frac{Q_{\text{totale}}}{\Delta t \times 3600} \quad [\text{kW}]')
+        st.markdown("$\Delta t$ en heures")
 
-        st.markdown("#### 🔶 Machine frigorifique — COP")
-        st.markdown('<div class="eq-box">COP = Q_froid / W_élec<br>⟹  P_élec = P_utile / COP  &nbsp;&nbsp;[kW]</div>', unsafe_allow_html=True)
+        st.markdown("#### Machine frigorifique — COP")
+        st.latex(r'\text{COP} = \frac{Q_{\text{froid}}}{W_{\text{élec}}} \implies P_{\text{élec}} = \frac{P_{\text{utile}}}{\text{COP}} \quad [\text{kW}]')
 
-        st.markdown("#### 🔶 Énergie électrique consommée")
-        st.markdown('<div class="eq-box">E_élec = P_élec × Δt  &nbsp;&nbsp;[kWh]</div>', unsafe_allow_html=True)
+        st.markdown("#### Énergie électrique consommée")
+        st.latex(r'E_{\text{élec}} = P_{\text{élec}} \times \Delta t \quad [\text{kWh}]')
 
-        st.markdown("#### 🔶 Coût énergétique")
-        st.markdown('<div class="eq-box">Coût = E_élec × p_élec  &nbsp;&nbsp;[MAD]<br>p_élec : tarif en MAD/kWh</div>', unsafe_allow_html=True)
+        st.markdown("#### Coût énergétique")
+        st.latex(r'\text{Coût} = E_{\text{élec}} \times p_{\text{élec}} \quad [\text{MAD}]')
+        st.markdown("$p_{\\text{élec}}$ : tarif en MAD/kWh")
 
-        st.markdown("#### 🔶 Temps minimal (puissance imposée)")
-        st.markdown('<div class="eq-box">t_min = Q_totale / (P_dispo × 3 600)  &nbsp;&nbsp;[h]</div>', unsafe_allow_html=True)
+        st.markdown("#### Temps minimal (puissance imposée)")
+        st.latex(r't_{\text{min}} = \frac{Q_{\text{totale}}}{P_{\text{dispo}} \times 3600} \quad [\text{h}]')
 
     st.markdown("---")
-    st.markdown("#### 📖 Hypothèses du modèle")
+    st.markdown("#### Hypothèses du modèle")
     st.markdown("""
 - Propriétés thermophysiques **constantes** par phase (cp, L)
 - Système **fermé** (traitement par lot)
@@ -1141,7 +1270,7 @@ des bilans thermodynamiques classiques appliqués aux procédés agroalimentaire
 # TAB 6 — INTERPRÉTATION
 # ══════════════════════════════════════════════════════════════════════════════
 with tabs[5]:
-    st.markdown("### 💬 Interprétation automatique des résultats")
+    st.markdown("### Interprétation automatique des résultats")
     if r is None:
         st.info("Veuillez d'abord lancer les calculs.")
     else:
@@ -1153,7 +1282,7 @@ with tabs[5]:
 
         # Radar chart — performance globale
         st.markdown("---")
-        st.markdown("#### 🕸️ Radar de performance du procédé")
+        st.markdown("#### Radar de performance du procédé")
 
         # Scores normalisés (0→10)
         score_cop       = min(10, r["COP"] / 7.0 * 10)
@@ -1189,7 +1318,7 @@ with tabs[5]:
 # TAB 7 — RAPPORT & EXPORT
 # ══════════════════════════════════════════════════════════════════════════════
 with tabs[6]:
-    st.markdown("### 📄 Rapport & Export")
+    st.markdown("### Rapport & Export")
     if r is None:
         st.info("Veuillez d'abord lancer les calculs.")
     else:
@@ -1215,11 +1344,11 @@ with tabs[6]:
 
         col_left, col_right = st.columns([2, 1])
         with col_left:
-            st.markdown("#### 📜 Aperçu du rapport")
+            st.markdown("#### Aperçu du rapport")
             st.markdown(rapport_md)
 
         with col_right:
-            st.markdown("#### ⬇️ Téléchargements")
+            st.markdown("#### Téléchargements")
 
             # ── Export Excel ────────────────────────────────────────────────
             # Sensibilité pour export
@@ -1261,7 +1390,7 @@ with tabs[6]:
 
             xlsx_bytes = exporter_excel(params_dict, r, df_sensi, df_sc, interpretations)
             st.download_button(
-                label="📥 Télécharger Excel (.xlsx)",
+                label="Télécharger Excel (.xlsx)",
                 data=xlsx_bytes,
                 file_name="ThermoIAA_resultats.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -1272,7 +1401,7 @@ with tabs[6]:
             pdf_bytes = exporter_pdf(rapport_md)
             if pdf_bytes:
                 st.download_button(
-                    label="📄 Télécharger rapport PDF",
+                    label="Télécharger rapport PDF",
                     data=pdf_bytes,
                     file_name="ThermoIAA_rapport.pdf",
                     mime="application/pdf",
@@ -1281,7 +1410,7 @@ with tabs[6]:
 
             # ── Export rapport Markdown ─────────────────────────────────────
             st.download_button(
-                label="📝 Télécharger rapport Markdown",
+                label="Télécharger rapport Markdown",
                 data=rapport_md.encode("utf-8"),
                 file_name="ThermoIAA_rapport.md",
                 mime="text/markdown",
@@ -1293,7 +1422,7 @@ with tabs[6]:
 # TAB 8 — HISTORIQUE
 # ══════════════════════════════════════════════════════════════════════════════
 with tabs[7]:
-    st.markdown("### 📋 Historique des simulations")
+    st.markdown("### Historique des simulations")
     historique = st.session_state.get("historique", [])
     if not historique:
         st.info("Aucune simulation effectuée dans cette session.")
@@ -1303,7 +1432,7 @@ with tabs[7]:
         df_hist.index.name = "N°"
         st.dataframe(df_hist, use_container_width=True)
 
-        if st.button("🗑️ Effacer l'historique"):
+        if st.button("Effacer l'historique"):
             st.session_state["historique"] = []
             st.rerun()
 
